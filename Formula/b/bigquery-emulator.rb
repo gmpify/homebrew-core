@@ -11,15 +11,12 @@ class BigqueryEmulator < Formula
 
   def install
     ENV["CGO_ENABLED"] = "1"
-    ENV.cxx11
 
-    static_link_flags = '-linkmode external -extldflags "-static"' if OS.linux?
-
-    ldflags = "-s -w -X main.version=#{version} -X main.revision=#{revision} #{static_link_flags}"
+    ldflags = "-s -w -X main.version=#{version} -X main.revision=#{version.commit}"
     system "go", "build", *std_go_args(ldflags:), "./cmd/bigquery-emulator"
   end
 
   test do
-    assert_match "version: #{version} (#{revision})", shell_output("#{bin}/bigquery-emulator --version")
+    assert_match "version: #{version} (#{version.commit})", shell_output("#{bin}/bigquery-emulator --version")
   end
 end
